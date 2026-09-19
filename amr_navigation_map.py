@@ -104,7 +104,7 @@ def render_and_save_map(grid_map, path, start, goal, filename="amr_navigation_ma
         ax1.plot(px, py, color='#00FF66', linewidth=3, marker='o', markersize=4, label='A* Path')
     ax1.plot(start[0], start[1], 'go', markersize=10, label='Start')
     ax1.plot(goal[0], goal[1], 'r*', markersize=12, label='Goal')
-    ax1.set_title("2D Occupancy Grid Map (15x15)")
+    ax1.set_title("2D Occupancy Grid Map (15x15 - 2 Obstacles)")
     ax1.grid(True, linestyle=':', linewidth=0.5)
     ax1.legend(loc='upper left')
 
@@ -134,7 +134,7 @@ def render_and_save_map(grid_map, path, start, goal, filename="amr_navigation_ma
         ax2.plot(px, py, [0.3]*len(path), color='#00FF44', linewidth=3, marker='o', markersize=4)
     ax2.scatter([start[0]], [start[1]], [0.5], color='green', s=80)
     ax2.scatter([goal[0]], [goal[1]], [0.5], color='red', s=120, marker='*')
-    ax2.set_title("3D Spatial Environment (15x15)")
+    ax2.set_title("3D Spatial Environment (2 Obstacles)")
     
     plt.tight_layout()
     plt.savefig(filename, dpi=300, bbox_inches='tight')
@@ -148,14 +148,21 @@ if __name__ == "__main__":
     print()
 
     grid_map = OccupancyGridMap(width=15, height=15)
-    for y in range(3, 12):
-        grid_map.add_wall_obstacle(7, y)
+    
+    # OBSTACLE 1: Dinding vertikal pertama di x=5
+    for y in range(2, 10):
+        grid_map.add_wall_obstacle(5, y)
+
+    # OBSTACLE 2: Dinding vertikal kedua di x=10
+    for y in range(6, 14):
+        grid_map.add_wall_obstacle(10, y)
+
     grid_map.apply_inflation_layer(radius=1)
 
     start_node = (1, 1)
     goal_node = (13, 13)
 
-    print(f"[1] Map Created ({grid_map.width}x{grid_map.height}). Start: {start_node}, Goal: {goal_node}")
+    print(f"[1] Map Created ({grid_map.width}x{grid_map.height}) with 2 Obstacles. Start: {start_node}, Goal: {goal_node}")
 
     planner = AStarPlanner(grid_map)
     path = planner.plan(start_node, goal_node)
