@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 class OccupancyGridMap:
-    def __init__(self, width=10, height=10):
+    def __init__(self, width=15, height=15):
         self.width = width
         self.height = height
         self.grid = np.zeros((height, width), dtype=int)
@@ -99,10 +99,10 @@ def render_combined_map(grid_map, path, start, goal):
     ax1.imshow(grid_map.grid, cmap='Blues', origin='lower')
     if path:
         px, py = zip(*path)
-        ax1.plot(px, py, color='#00FF66', linewidth=3, marker='o', markersize=5, label='A* Path')
+        ax1.plot(px, py, color='#00FF66', linewidth=3, marker='o', markersize=4, label='A* Path')
     ax1.plot(start[0], start[1], 'go', markersize=10, label='Start')
     ax1.plot(goal[0], goal[1], 'r*', markersize=12, label='Goal')
-    ax1.set_title("2D Occupancy Grid Map (10x10)")
+    ax1.set_title("2D Custom Grid Map (15x15)")
     ax1.grid(True, linestyle=':', linewidth=0.5)
     ax1.legend(loc='upper left')
 
@@ -128,21 +128,28 @@ def render_combined_map(grid_map, path, start, goal):
     ax2.bar3d(x, y, np.zeros_like(top), 0.8, 0.8, top, color=colors, shade=True, alpha=0.8)
     if path:
         px, py = zip(*path)
-        ax2.plot(px, py, [0.3]*len(path), color='#00FF44', linewidth=3, marker='o', markersize=4)
+        ax2.plot(px, py, [0.3]*len(path), color='#00FF44', linewidth=3, marker='o', markersize=3)
     ax2.scatter([start[0]], [start[1]], [0.5], color='green', s=80)
     ax2.scatter([goal[0]], [goal[1]], [0.5], color='red', s=120, marker='*')
-    ax2.set_title("3D Spatial Environment")
+    ax2.set_title("3D Custom Environment")
     plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
-    grid_map = OccupancyGridMap(width=10, height=10)
-    for y in range(2, 8):
-        grid_map.add_wall_obstacle(4, y)
+    grid_map = OccupancyGridMap(width=15, height=15)
+    
+    # Dinding 1
+    for y in range(0, 11):
+        grid_map.add_wall_obstacle(5, y)
+        
+    # Dinding 2
+    for x in range(8, 15):
+        grid_map.add_wall_obstacle(x, 7)
+        
     grid_map.apply_inflation_layer(radius=1)
 
-    start_node = (1, 1)
-    goal_node = (8, 8)
+    start_node = (0, 0)
+    goal_node = (14, 14)
 
     planner = AStarPlanner(grid_map)
     path = planner.plan(start_node, goal_node)
